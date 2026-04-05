@@ -26,22 +26,43 @@ interface CustomTableProps {
     data: TableRow[];
     from: number;
     onDelete: (id: number, route: string) => void;
+    onView: (row: TableRow) => void;
+    onEdit: (row: TableRow) => void;
+    isModal?: boolean;
 }
 
-export const CustomTable = ({ columns, actions, data, from, onDelete }: CustomTableProps) => {
+export const CustomTable = ({ columns, actions, data, from, onDelete, onView, onEdit, isModal }: CustomTableProps) => {
 
     // console.log('Action-->', actions);
 
     const renderActionButtons = (row: TableRow) => {
         return (
-            <div className="flex gap-2">
+            <div className="flex gap-2 items-center justify-center">
                 { actions.map((action, index) => {
                     const IconComponent = LucidIcons[action.icon] as React.ElementType;
+
+                    if (isModal) {
+                        if (action.label === 'View') {
+                            return (
+                                <Button key={index} className={action.className} onClick={() => onView?.(row)} >
+                                    <IconComponent size={18} />
+                                </Button>
+                            )
+                        }
+                        
+                        if (action.label === 'Edit') {
+                            return (
+                                <Button key={index} className={action.className} onClick={() => onEdit?.(row)} >
+                                    <IconComponent size={18} />
+                                </Button>
+                            )
+                        }
+                    }
 
                     // delete functionality
                     if (action.label === 'Delete') {
                         return (
-                            <Button key={index} className={action.className} onClick={() => onDelete(row.id, route(action.route, row.id))}>
+                            <Button key={index} className={action.className} onClick={() => onDelete(route(action.route, row.id))}>
                                 <IconComponent size={18} />
                             </Button>
                         )

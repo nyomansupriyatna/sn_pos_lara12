@@ -16,6 +16,7 @@ import {
 import { dashboard } from '@/routes';
 import type { NavItem } from '@/types';
 import AppLogo from './app-logo';
+import { useLayout } from '@/contexts/LayoutContext';
 
 const mainNavItems: NavItem[] = [
     {
@@ -26,6 +27,11 @@ const mainNavItems: NavItem[] = [
     {
         title: 'Billing',
         href: '#',
+        icon: AppWindow ,
+    },
+    {
+        title: 'Outlet',
+        href: '/outlets',
         icon: AppWindow ,
     },
     {
@@ -64,9 +70,10 @@ export function AppSidebar() {
         setOpenMenu(openMenu === menu ? null : menu);
     };
 
+    const { position } = useLayout();
 
     return (
-        <Sidebar collapsible="icon" variant="inset">
+        <Sidebar side={position} collapsible="icon" variant="inset">
             <SidebarHeader>
                 <SidebarMenu>
                     <SidebarMenuItem>

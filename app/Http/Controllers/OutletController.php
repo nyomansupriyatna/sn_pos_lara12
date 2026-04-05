@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Http\Requests\PropertyFormRequest;
-use App\Models\Property;
+use App\Http\Requests\OutletRequest;
+use App\Models\Outlet;
 use Exception;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -17,7 +17,9 @@ class OutletController extends Controller
      */
     public function index()
     {
-        return Inertia::render('outlet/index');
+        return Inertia::render('outlet/index', [
+            'outlets' => Outlet::paginate(10)->withQueryString(),
+        ]);
     }
 
     /**
@@ -33,44 +35,22 @@ class OutletController extends Controller
      * @param PropertyFormRequest $request
      * @return \Illuminate\Http\RedirectResponse
      */
-    public function store(PropertyFormRequest $request)
+    public function store(OutletRequest $request)
     {
 
-        // dd($request->all());
-
         try {
-            $logo = null;
-
-            $prop = Property::create([
-                'name' => $request->name,
-                'category' => $request->category,
-                'address' => $request->address,
-                'city' => $request->city,
-                'contact' => $request->contact,
-                'phone' => $request->phone,
-                'email' => $request->email,
+            $outlet = Outlet::create([
+                'outlet' => $request->outlet,
+                'service' => $request->service,
+                'tax' => $request->tax,
             ]);
 
-            if ($request->file('filelogo')) {
-                $logo = $request->file('filelogo');
-                // $logoOriginalName = $logo->getClientOriginalName();
-                $ext = $logo->getClientOriginalExtension();
-                $fileName = $prop->id . '.' . $ext;
-                $logo->storeAs('property', $fileName, 'public'); //ok
-
-                $prop->update([
-                    'logo' => 'property/' . $fileName
-                ]);
+            if ($outlet) {
+                return redirect()->route('outlets.index')->with('success', 'Outlet created successfully');
             }
-
-            if ($prop) {
-                return redirect()->route('properties.index')->with('success', 'Property berhasil disimpan');
-            }
-
-            return redirect()->back()->with('error', 'Property gagal disimpan, silakan coba lagi');
+            return redirect()->back()->with('error', 'Unable to create outlet. Please try again.');
         } catch (Exception $e) {
-
-            Log::error('Property gagal dibuat: ' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to create outlet');
         }
     }
 
@@ -88,7 +68,7 @@ class OutletController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Property $property)
+    public function edit(Outlet $property)
     {
         return Inertia::render('property/property-form', [
             'property' => $property,
@@ -99,65 +79,50 @@ class OutletController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(PropertyFormRequest $request, Property $property)
+    public function update(OutletRequest $request, Outlet $outlet)
     {
-        // dd($request->all(), $property);
-        // dd(session()->all());
-
+        // dd($request->all());
         try {
-            if ($request->file('filelogo')) {
-                $logo = $request->file('filelogo');
-                // $logoOriginalName = $logo->getClientOriginalName();
-                $ext = $logo->getClientOriginalExtension();
-                $fileName = $property->id . '.' . $ext;
+            $outletImagePath = null;
 
-                Storage::disk('public')
-                    ->delete($property->logo);
-
-                $logo->storeAs('property', $fileName, 'public'); //overwite existing file dengan nama sama
-                $property->logo = 'property/' .  $fileName;
+            if ($request->hasFile('image')) {
+                $outletImagePath = $request->file('image')->store('outlets', 'public');
             }
 
-            if ($property) {
-                $property->update([
-                    $property->name = $request->name,
-                    $property->category = $request->category,
-                    $property->address = $request->address,
-                    $property->city = $request->city,
-                    $property->contact = $request->contact,
-                    $property->phone = $request->phone,
-                    $property->email = $request->email,
-                ]);
+            $outlet->outlet = $request->outlet;
+            $outlet->service = $request->service;
+            $outlet->tax = $request->tax;
 
-                // $property->update();
-                return redirect()->route('properties.index')->with('success', 'Perubahan berhasil disimpan');
+            if ($outletImagePath) {
+                $outlet->image = $outletImagePath;
             }
 
-            return redirect()->back()->with('error', 'Perubahan gagal disimpan, silakan coba lagi');
+            $outlet->save();
+
+            if ($outlet) {
+                return redirect()->route('outlets.index')->with('success', 'Outlet updated successfully');
+            }
+            return redirect()->back()->with('error', 'Unable to update outlet. Please try again.');
         } catch (Exception $e) {
-            Log::error('Update failed.' . $e->getMessage());
+            return redirect()->back()->with('error', 'Failed to update outlet');
         }
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Property $property)
+    public function destroy(Outlet $outlet)
     {
-        // dd($property);
+        // dd($outlet);
 
         try {
-            if ($property) {
-                if ($property->logo) {
-                    Storage::disk('public')
-                        ->delete($property->logo);
-                    $property->delete();
-                }
-                return redirect()->route('properties.index')->with('success', 'Data berhasil dihapus!');
+            if ($outlet) {
+                $outlet->delete();
+                return redirect()->route('outlets.index')->with('success', 'Outlet deleted successfully');
             }
-            return redirect()->back()->with('error', 'Unable to delete this property. Please try again.');
+            return redirect()->back()->with('error', 'Unable to delete this outlet. Please try again.');
         } catch (Exception $e) {
-            Log::error('Property deleted failed.' . $e->getMessage());
+            Log::error('Outlet deleted failed.' . $e->getMessage());
         }
     }
 }
