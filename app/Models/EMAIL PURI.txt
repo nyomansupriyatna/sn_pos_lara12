@@ -1,0 +1,43 @@
+1. EXECUTIVE
+(Pak Mandir) 	    managing-director@santrian.com;
+(Bu Trisna)	        fc@santrian.com
+(Pak Arya Wi)	    executive-director@santrian.com;
+(Pak Made EAM)	    eam@santrian.com;
+
+2. HOD
+(Bu Lia CA)	        ca-puri@santrian.com;
+(Mgr. Civil)	    civil-puri@santrian.com;
+(CE)		        eng.me-puri@santrian.com;
+(FB)		        fbm-puri@santrian.com;
+(Pak Bagus fb)	    fb-director@santrian.com;
+(FOM BU Agung)      fom-puri@santrian.com;
+(Recreation)	    recreation-puri@santrian.com;
+(House Keeper)	    hk-puri@santrian.com;
+(BU ARI HRM)	    corporate.hrdirector@santrian.com;
+(Chief Security)	chief.security-puri@santrian.com;
+(Mandir (Rose))	    secretary-mandir@santrian.com;
+(Bu Mery DOSM)	    dosm@santrian.com;
+(Kadek Ariawan)	    kadek-ariawan@santrian.com;
+(Putu Swihendra)	architect@santrian.com;
+(Bu Jerry)	        spa-manager@santrian.com;
+
+
+3. ACCOUNTING
+(Bu Lia)	        ca-puri@santrian.com
+(Pak Darnya)	    ca-corporate@santrian.com
+(Ayu Handayani)	    acct.secretary@santrian.com
+(EDP)	            edp@santrian.com
+(Income)	        income-puri@santrian.com
+(GC) 	            generalcashier-puri@santrian.com
+(AR. Admin)	        ar-puri@santrian.com
+(Purchasing)	    purchasing-puri@santrian.com
+(Asst CA)	        asst.ca-puri@santrian.com
+(Dewa Wiguna)	    costcontrol-puri@santrian.com
+(Pak A. Suteja)	    purchasing.mgr-puri@santrian.com
+(IB Gaga)	        book.keeper-puri@santrian.com
+(Cok Raka)	        audit-puri@santrian.com
+(Credit)	        cm-puri@santrian.com
+(Adit IA)	        audit1-puri@santrian.com
+(Gusde Waisaka)	    audit2-puri@santrian.com
+(Mawar)	            audit3-puri@santrian.com
+(Pak IB Parka)	    asstfc@santrian.com

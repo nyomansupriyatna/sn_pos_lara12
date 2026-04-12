@@ -1,5 +1,5 @@
-import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, AppWindow, Bolt, Settings  } from 'lucide-react';
+import { Link, usePage } from '@inertiajs/react';
+import { BookOpen, Folder, LayoutGrid, AppWindow, Bolt, Settings, Lock, Shield, User, Home  } from 'lucide-react';
 import { useState } from 'react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -25,25 +25,45 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Billing',
-        href: '#',
-        icon: AppWindow ,
+        title: 'Permission',
+        href: '/permissions',
+        icon: Lock,
+        permission: 'access-permissions-module'
+    },
+    {
+        title: 'Roles',
+        href: '/roles',
+        icon: Shield,
+        permission: 'access-roles-module'
+    },
+    {
+        title: 'User',
+        href: '/users',
+        icon: User,
+        permission: 'access-users-module'
     },
     {
         title: 'Outlet',
         href: '/outlets',
         icon: AppWindow ,
+        permission: 'access-outlets-module'
     },
     {
-        title: 'Master Data',
-        href: '#',
-        icon: AppWindow ,
+        title: 'Property',
+        href: '/properties',
+        icon: Home ,
+        permission: 'access-properties-module'
     },
-    {
-        title: 'Setting',
-        href: '#',
-        icon: Settings  ,
-    },
+    // {
+    //     title: 'Master Data',
+    //     href: '#',
+    //     icon: AppWindow ,
+    // },
+    // {
+    //     title: 'Setting',
+    //     href: '#',
+    //     icon: Settings  ,
+    // },
 ];
 
 const footerNavItems: NavItem[] = [
@@ -63,14 +83,24 @@ const footerNavItems: NavItem[] = [
 
 export function AppSidebar() {
 
+    // console.log('use Page--->',usePage().props);
+    const { auth } = usePage().props as any;
+    const roles = auth.roles;
+    const permissions = auth.permissions;
+
+    const { position } = useLayout();
+
+    const filteredNavItems = mainNavItems.filter((item) => !item.permission || permissions.includes(item.permission));
+
+    // console.log(filteredNavItems);
+
     // -----------------------------------new
     const [openMenu, setOpenMenu] = useState<string | null>(null);
 
-    const toggleMenu = (menu: string) => {
-        setOpenMenu(openMenu === menu ? null : menu);
-    };
+    // const toggleMenu = (menu: string) => {
+    //     setOpenMenu(openMenu === menu ? null : menu);
+    // };
 
-    const { position } = useLayout();
 
     return (
         <Sidebar side={position} collapsible="icon" variant="inset">
@@ -87,12 +117,12 @@ export function AppSidebar() {
             </SidebarHeader>
 
             <SidebarContent>
-                <NavMain items={mainNavItems} />
+                <NavMain items={filteredNavItems} position={position} />
             </SidebarContent>
 
-            <SidebarContent>
+            {/* <SidebarContent> */}
                  {/* Master Menu */}
-                <div>
+                {/* <div>
                     <button
                         onClick={() => toggleMenu("master")}
                         className="w-full text-left py-2 px-3 rounded hover:bg-gray-700 flex justify-between items-center"
@@ -121,10 +151,10 @@ export function AppSidebar() {
                             Customers
                         </Link>
                     </div>
-                </div>
+                </div> */}
 
                 {/* Reports */}
-                <div>
+                {/* <div>
                     <button
                         onClick={() => toggleMenu("report")}
                         className="w-full text-left py-2 px-3 rounded hover:bg-gray-700 flex justify-between items-center"
@@ -153,12 +183,12 @@ export function AppSidebar() {
                             Stock Report
                         </Link>
                     </div>
-                </div>
-            </SidebarContent>
+                </div> */}
+            {/* </SidebarContent> */}
 
             <SidebarFooter>
                 {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
-                <NavUser />
+                <NavUser position={position}/>
             </SidebarFooter>
         </Sidebar>
     );

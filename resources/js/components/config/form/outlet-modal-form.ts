@@ -11,6 +11,7 @@ export const OutletModalFormConfig = {
         icon: CirclePlus,
         type: 'button',
         variant: 'default',
+        permission: 'create-outlet',
     },
     fields: [
         {
