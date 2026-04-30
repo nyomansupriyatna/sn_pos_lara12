@@ -14,7 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Pagination } from '@/components/ui/pagination';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-
+import properties from '@/routes/properties';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -55,15 +55,30 @@ interface FlashProps extends Record<string, any> {
     };
 }
 
+interface Permission {
+    id: number;
+    name: string;
+    label: string;
+    description: string;
+}
+
+interface PermissionPagination {
+    data: Permission[];
+    links: LinkProps;
+    from: number;
+    to: number;
+    total: number;
+}
+
 interface IndexProps {
+    permissions: PermissionPagination;
     outlets: PermissionPagination;
     filters: FilterProps;
     totalCount: number;
     filteredCount: number;
 }
 
-
-export default function Index({ permissions } : IndexProps) {
+export default function Index({permissions, filters, totalCount, filteredCount}: IndexProps) {
     const { flash } = usePage<{flash?: {success?: string; error?: string} }>().props ;
     const flashMessage = flash?.success || flash?.error;
     const [ modalOpen, setModalOpen ] = useState(false);
@@ -74,8 +89,60 @@ export default function Index({ permissions } : IndexProps) {
         module: '',
         label: '',
         description:'',
-        _method: 'POST'
+        _method: 'POST',
+        search: '',
+        perPage: '10',
     });
+
+    // const { data, setData, errors, processing, reset, post } = useForm ({
+    //     search: '',
+    //     perPage: '10',
+    // });
+
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setData('search', value);
+
+        const queryString =  {
+            ...(value && {search: value}),
+            ...(data.perPage && {perPage: data.perPage}),
+        }
+
+        router.get(route('permissions.index'), queryString, {
+            preserveState: true,
+            preserveScroll: true,
+
+        })
+
+    }
+
+    // reset search
+    const handleReset = () => {
+        setData('search', '');
+        setData('perPage', '10');
+
+        router.get(route('permissions.index'), {}, {
+            preserveState: true,
+            preserveScroll: true,
+        })
+    }
+
+    const handlePerPageCange = (value: string) => {
+        // console.log(value)
+        setData('perPage', value);
+
+        const queryString =  {
+            ...(data.search && {search: data.search}),
+            ...(value && {perPage: value}),
+        }
+
+        // kirim querystring perpage to serverside php
+        router.get(route('permissions.index'), queryString, {
+            preserveState: true,
+            preserveScroll: true,
+        })
+
+    }
 
     // handle delete
     const handleDelete = (route: string) => {
@@ -188,7 +255,7 @@ export default function Index({ permissions } : IndexProps) {
             <div className='flex h-full flex-1 flex-col rounded-xl p-4'>
 
                 {/* custom modal form */}
-                <div className='ml-auto'>
+                <div className='ml-auto w-full'>
                    <CustomModalForm 
                    addButton={PermissionModalFormConfig.addButton}
                    title ={mode === 'view' ? 'View Permission' : (mode === 'edit' ? 'Update Permission' : PermissionModalFormConfig.title)}
@@ -203,6 +270,8 @@ export default function Index({ permissions } : IndexProps) {
                    open={modalOpen}
                    onOpenChange={handleModalToggle}
                    mode={mode}
+                   handleSearch={handleSearch}
+                   handleReset={handleReset}
                    />
                 </div>
 
@@ -216,6 +285,15 @@ export default function Index({ permissions } : IndexProps) {
                     onEdit={(permission) => openModal('edit', permission)}
                     isModal={true}
                 />
+
+             <Pagination 
+                sumber={permissions} 
+                perPage={data.perPage} 
+                onPerPageChange={handlePerPageCange} 
+                totalCount={totalCount} 
+                filteredCount={filteredCount} 
+                search={data.search} 
+            />
 
          </div>
         </AppLayout>

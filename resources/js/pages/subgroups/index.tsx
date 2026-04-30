@@ -3,8 +3,6 @@ import { Head, usePage, Link, router, useForm } from '@inertiajs/react';
 import { CirclePlusIcon, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { route } from 'ziggy-js';
-import { OutletModalFormConfig } from '@/components/config/form/outlet-modal-form';
-import { OutletTableConfig } from '@/components/config/tables/outlet-table';
 import { CustomModalForm } from '@/components/custom-modal-form';
 import { CustomToast, toast } from '@/components/custom-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -14,12 +12,13 @@ import { Input } from '@/components/ui/input';
 import { Pagination } from '@/components/ui/pagination';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-
+import { SubgroupTableConfig } from '@/components/config/tables/subgroup-table';
+import { SubgroupModalFormConfig } from '@/components/config/form/subgroup-modal-form';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Outlet',
-        href: '/outlets',
+        title: 'Sub Group',
+        href: '/subgroups',
     },
 ];
 
@@ -29,15 +28,16 @@ interface LinkProps {
     url: string;
 }
 
-interface Outlet {
+interface Subgroup {
     id: number;
-    outlet: string;
-    tax: number;
-    service: number;
+    group_id: number;
+    groups: string;
+    subgroup: string;
+    description: string;
 }
 
-interface OutletPagination {
-    data: Outlet[];
+interface SubGroupPagination {
+    data: Subgroup[];
     links: LinkProps;
     from: number;
     to: number;
@@ -54,33 +54,35 @@ interface FlashProps extends Record<string, any> {
         error?: string;
     };
 }
+interface groupProps {
+    id: number;
+    group: string;
+    description: string;
+}
 
 interface IndexProps {
-    outlets: OutletPagination;
+    subgroups: SubGroupPagination;
+    groups: groupProps;
     filters: FilterProps;
     totalCount: number;
     filteredCount: number;
 }
 
 
-export default function Index({outlets, totalCount, filteredCount } : IndexProps) {
+export default function Index({subgroups, totalCount, filteredCount, filters  } : IndexProps) {
     const { flash } = usePage<{flash?: {success?: string; error?: string} }>().props ;
     const flashMessage = flash?.success || flash?.error;
     const [ modalOpen, setModalOpen ] = useState(false);
     const [ mode, setMode ] = useState<'create' | 'view' | 'edit'>('create');
-    const [ selectedOutlet, setSelectedOutlet ] = useState<any>(null);
+    const [ selectedGroup, setSelectedGroup ] = useState<any>(null);
     const [ previewImage, setPreviewImage ] = useState<string | null>(null);
+    const { props } = usePage();
 
-    const {data, setData, errors, processing, reset, post} = useForm({
-        outlet: '',
-        service: '',
-        tax:'',
-        image: null as File | null,
-        _method: 'POST',
-        search:'',
+    const { data, setData, errors, processing, reset, post } = useForm ({
+        search: '',
         perPage: '10',
-
     });
+
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -91,13 +93,11 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
             ...(data.perPage && {perPage: data.perPage}),
         }
 
-        router.get(route('outlets.index'), queryString, {
+        router.get(route('subgroups.index'), queryString, {
             preserveState: true,
             preserveScroll: true,
 
         })
-
-        console.log('perpage-->', data.perPage);
 
     }
 
@@ -106,7 +106,7 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
         setData('search', '');
         setData('perPage', '10');
 
-        router.get(route('outlets.index'), {}, {
+        router.get(route('subgroups.index'), {}, {
             preserveState: true,
             preserveScroll: true,
         })
@@ -115,17 +115,16 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
     // handle delete
     const handleDelete = (route: string) => {
         if (confirm('Are you sure, you want to delete?')) {
-            // console.log('route:', route);
             router.delete(route, {
                 preserveScroll: true,
                 onSuccess: (response: {props: FlashProps}) => {
-                const successMessage = response.props.flash?.success || 'Outlet deleted successfully'
+                const successMessage = response.props.flash?.success || 'Sub Group deleted successfully'
                    toast.success(successMessage);
 
                     closeModal();
                 },
                  onError: (error: Record<string, string>) => {
-                     const errorMessage = error.message || 'Failed to delete outlet'
+                     const errorMessage = error.message || 'Failed to delete sub group'
                      toast.error(errorMessage);
     
                 }
@@ -138,20 +137,20 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
         e.preventDefault();
 
         // edit mode
-        if (mode === 'edit' && selectedOutlet) {
+        if (mode === 'edit' && selectedGroup) {
 
             data._method = 'PUT';
 
-            post(route('outlets.update', selectedOutlet.id), {
+            post(route('subgroups.update', selectedGroup.id), {
                 forceFormData: true,
                 onSuccess: (response: {props: FlashProps}) => {
-                const successMessage = response.props.flash?.success || 'Outlet updated successfully'
+                const successMessage = response.props.flash?.success || 'Sub Group updated successfully'
                    toast.success(successMessage);
 
                     closeModal();
                 },
                 onError: (error: Record<string, string>) => {
-                     const errorMessage = error.message || 'Failed to updated outlet'
+                     const errorMessage = error.message || 'Failed to updated sub group'
                      toast.error(errorMessage);
     
                 }
@@ -159,15 +158,15 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
 
         // create mode
         } else {
-            post(route('outlets.store'), {
+            post(route('subgroups.store'), {
                onSuccess: (response: {props: FlashProps}) => {
-                const successMessage = response.props.flash?.success || 'Outlet created successfully'
+                const successMessage = response.props.flash?.success || 'Sub Group created successfully'
                    toast.success(successMessage);
 
                     closeModal();
                 },
                 onError: (error: Record<string, string>) => {
-                     const errorMessage = error.message || 'Failed to create outlet'
+                     const errorMessage = error.message || 'Failed to create sub group'
                      toast.error(errorMessage);
     
                 }
@@ -181,7 +180,7 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
     const closeModal = () => {
         setMode('create');
         setPreviewImage(null);
-        setSelectedOutlet(null);
+        setSelectedGroup(null);
         reset();
         setModalOpen(false);
     };
@@ -192,25 +191,25 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
         if (!open) {
             setMode('create');
             setPreviewImage(null);
-            setSelectedOutlet(null);
+            setSelectedGroup(null);
             reset();
         }
     };
 
     // open modal
-    const openModal = (mode: 'create' | 'view' | 'edit', outlet?: any) => {
+    const openModal = (mode: 'create' | 'view' | 'edit', subgroup?: any) => {
         setMode(mode);
 
-        if (outlet) {
-            Object.entries(outlet).forEach(([key, value]) => {
+        if (subgroup) {
+            Object.entries(subgroup).forEach(([key, value]) => {
                 if (key !== 'image') {
                     setData(key as keyof typeof data, value as string | null);
                 }
             });
 
             // setting image preview
-            setPreviewImage(outlet.image);
-            setSelectedOutlet(outlet);
+            setPreviewImage(subgroup.image);
+            setSelectedGroup(subgroup);
         } else {
             // console.log(data);
         }
@@ -227,7 +226,7 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
         }
 
         // kirim querystring perpage to serverside php
-        router.get(route('outlets.index'), queryString, {
+        router.get(route('subgroups.index'), queryString, {
             preserveState: true,
             preserveScroll: true,
         })
@@ -236,20 +235,20 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Outlet" />
+            <Head title="Group" />
 
             <CustomToast />
 
             <div className='flex h-full flex-1 flex-col rounded-xl p-4'>
-
+                
                 {/* custom modal form */}
                 <div className='ml-auto w-full'>
                    <CustomModalForm 
-                   addButton={OutletModalFormConfig.addButton}
-                   title ={mode === 'view' ? 'View Outlet' : (mode === 'edit' ? 'Update Outlet' : OutletModalFormConfig.title)}
-                   description={OutletModalFormConfig.description}
-                   fields={OutletModalFormConfig.fields}
-                   buttons={OutletModalFormConfig.buttons}
+                   addButton={SubgroupModalFormConfig.addButton}
+                   title ={mode === 'view' ? 'View Group' : (mode === 'edit' ? 'Update Group' : SubgroupModalFormConfig.title)}
+                   description={SubgroupModalFormConfig.description}
+                   fields={SubgroupModalFormConfig.fields}
+                   buttons={SubgroupModalFormConfig.buttons}
                    data={data}
                    setData={setData}
                    errors={errors}
@@ -259,24 +258,25 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
                    onOpenChange={handleModalToggle}
                    mode={mode}
                    previewImage={previewImage}
+                   extraData={props}
                    handleSearch={handleSearch}
                    handleReset={handleReset}
                    />
                 </div>
 
                 <CustomTable 
-                    columns={OutletTableConfig.columns} 
-                    actions={OutletTableConfig.actions} 
-                    data={outlets.data} 
-                    from={outlets.from} 
+                    columns={SubgroupTableConfig.columns} 
+                    actions={SubgroupTableConfig.actions} 
+                    data={subgroups.data} 
+                    from={subgroups.from} 
                     onDelete={handleDelete}
-                    onView={(outlet) => openModal('view', outlet)}
-                    onEdit={(outlet) => openModal('edit', outlet)}
+                    onView={(subgroup) => openModal('view', subgroup)}
+                    onEdit={(subgroup) => openModal('edit', subgroup)}
                     isModal={true}
                 />
 
                 <Pagination 
-                    sumber={outlets} 
+                    sumber={subgroups} 
                     perPage={data.perPage} 
                     onPerPageChange={handlePerPageCange} 
                     totalCount={totalCount} 

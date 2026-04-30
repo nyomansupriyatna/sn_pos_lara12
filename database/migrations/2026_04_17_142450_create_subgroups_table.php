@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('subgroups', function (Blueprint $table) {
             $table->id();
             $table->foreignId('group_id')->constrained()->onDelete('restrict');
-            $table->string('subgroup');
+            $table->string('name');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

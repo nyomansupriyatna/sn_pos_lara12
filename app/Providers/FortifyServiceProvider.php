@@ -50,6 +50,8 @@ class FortifyServiceProvider extends ServiceProvider
                 return $user;
             }
 
+            dd($user);
+
             return null;
         });
     }

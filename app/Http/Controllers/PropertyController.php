@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\Request;
+use SebastianBergmann\Environment\Console;
 
 class PropertyController extends Controller
 {
@@ -26,7 +27,6 @@ class PropertyController extends Controller
 
         if ($request->filled("search")) {
             $search = $request->search;
-            // dd($search);
             $propertiesQuery->where(
                 fn($query) =>
                 $query->where('name', 'like', "%{$search}%")
@@ -45,7 +45,7 @@ class PropertyController extends Controller
 
         // fecth all record 
         if ($perPage === -1) {
-            $allProperties = $propertiesQuery->latest()->get()->map(fn($property) => [
+            $propertiesQuery = $propertiesQuery->latest()->get()->map(fn($property) => [
                 'id' => $property->id,
                 'name' => $property->name,
                 'category' => $property->category,
@@ -58,17 +58,17 @@ class PropertyController extends Controller
                 'created_at' => $property->created_at->format('d M Y'),
             ]);
 
-            $properties = [
-                'data' => $allProperties,
-                'total' => $filteredCount,
-                'per_page' => $perPage,
-                'from' => 1,
-                'to' => $filteredCount,
-                'links' => [],
-            ];
+            // $properties = [
+            //     'data' => $allProperties,
+            //     'total' => $filteredCount,
+            //     'per_page' => $perPage,
+            //     'from' => 1,
+            //     'to' => $filteredCount,
+            //     'links' => [],
+            // ];
         } else {
-            $properties = $propertiesQuery->latest()->paginate($perPage)->withQueryString();
-            $properties->getCollection()->transform(fn($property) => [
+            $propertiesQuery = $propertiesQuery->latest()->paginate($perPage)->withQueryString();
+            $propertiesQuery->getCollection()->transform(fn($property) => [
                 'id' => $property->id,
                 'name' => $property->name,
                 'category' => $property->category,
@@ -82,7 +82,14 @@ class PropertyController extends Controller
             ]);
         }
 
-
+        $properties = [
+            'data' => $propertiesQuery,
+            'total' => $filteredCount,
+            'per_page' => $perPage,
+            'from' => 1,
+            'to' => $filteredCount,
+            'links' => [],
+        ];
 
         return Inertia::render('property/index', [
             'properties' => $properties,

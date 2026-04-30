@@ -1,10 +1,7 @@
-
 import { Head, usePage, Link, router, useForm } from '@inertiajs/react';
 import { CirclePlusIcon, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { route } from 'ziggy-js';
-import { OutletModalFormConfig } from '@/components/config/form/outlet-modal-form';
-import { OutletTableConfig } from '@/components/config/tables/outlet-table';
 import { CustomModalForm } from '@/components/custom-modal-form';
 import { CustomToast, toast } from '@/components/custom-toast';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -14,12 +11,13 @@ import { Input } from '@/components/ui/input';
 import { Pagination } from '@/components/ui/pagination';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
-
+import { PortionTableConfig } from '@/components/config/tables/portion-table';
+import { PortionModalFormConfig } from '@/components/config/form/portion-modal-form';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Outlet',
-        href: '/outlets',
+        title: 'Portion',
+        href: '/portion',
     },
 ];
 
@@ -29,15 +27,14 @@ interface LinkProps {
     url: string;
 }
 
-interface Outlet {
+interface dataRecord {
     id: number;
-    outlet: string;
-    tax: number;
-    service: number;
+    name: string;
+    description: string;
 }
 
-interface OutletPagination {
-    data: Outlet[];
+interface dataPagination {
+    data: dataRecord[];
     links: LinkProps;
     from: number;
     to: number;
@@ -56,31 +53,25 @@ interface FlashProps extends Record<string, any> {
 }
 
 interface IndexProps {
-    outlets: OutletPagination;
+    datasources: dataPagination;
     filters: FilterProps;
     totalCount: number;
     filteredCount: number;
 }
 
 
-export default function Index({outlets, totalCount, filteredCount } : IndexProps) {
-    const { flash } = usePage<{flash?: {success?: string; error?: string} }>().props ;
-    const flashMessage = flash?.success || flash?.error;
+export default function Index({datasources, totalCount, filteredCount, filters  } : IndexProps) {
     const [ modalOpen, setModalOpen ] = useState(false);
     const [ mode, setMode ] = useState<'create' | 'view' | 'edit'>('create');
-    const [ selectedOutlet, setSelectedOutlet ] = useState<any>(null);
+    const [ selectedRow, setSelectedGroup ] = useState<any>(null);
     const [ previewImage, setPreviewImage ] = useState<string | null>(null);
+    const { props } = usePage();
 
-    const {data, setData, errors, processing, reset, post} = useForm({
-        outlet: '',
-        service: '',
-        tax:'',
-        image: null as File | null,
-        _method: 'POST',
-        search:'',
+    const { data, setData, errors, processing, reset, post } = useForm ({
+        search: '',
         perPage: '10',
-
     });
+
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
@@ -91,13 +82,11 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
             ...(data.perPage && {perPage: data.perPage}),
         }
 
-        router.get(route('outlets.index'), queryString, {
+        router.get(route('portions.index'), queryString, {
             preserveState: true,
             preserveScroll: true,
 
         })
-
-        console.log('perpage-->', data.perPage);
 
     }
 
@@ -106,7 +95,7 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
         setData('search', '');
         setData('perPage', '10');
 
-        router.get(route('outlets.index'), {}, {
+        router.get(route('portions.index'), {}, {
             preserveState: true,
             preserveScroll: true,
         })
@@ -115,17 +104,16 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
     // handle delete
     const handleDelete = (route: string) => {
         if (confirm('Are you sure, you want to delete?')) {
-            // console.log('route:', route);
             router.delete(route, {
                 preserveScroll: true,
                 onSuccess: (response: {props: FlashProps}) => {
-                const successMessage = response.props.flash?.success || 'Outlet deleted successfully'
+                const successMessage = response.props.flash?.success || 'Record deleted successfully'
                    toast.success(successMessage);
 
                     closeModal();
                 },
                  onError: (error: Record<string, string>) => {
-                     const errorMessage = error.message || 'Failed to delete outlet'
+                     const errorMessage = error.message || 'Failed to delete record'
                      toast.error(errorMessage);
     
                 }
@@ -138,20 +126,20 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
         e.preventDefault();
 
         // edit mode
-        if (mode === 'edit' && selectedOutlet) {
+        if (mode === 'edit' && selectedRow) {
 
             data._method = 'PUT';
 
-            post(route('outlets.update', selectedOutlet.id), {
+            post(route('portions.update', selectedRow.id), {
                 forceFormData: true,
                 onSuccess: (response: {props: FlashProps}) => {
-                const successMessage = response.props.flash?.success || 'Outlet updated successfully'
+                const successMessage = response.props.flash?.success || 'Record updated successfully'
                    toast.success(successMessage);
 
                     closeModal();
                 },
                 onError: (error: Record<string, string>) => {
-                     const errorMessage = error.message || 'Failed to updated outlet'
+                     const errorMessage = error.message || 'Failed to updated record'
                      toast.error(errorMessage);
     
                 }
@@ -159,15 +147,15 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
 
         // create mode
         } else {
-            post(route('outlets.store'), {
+            post(route('portions.store'), {
                onSuccess: (response: {props: FlashProps}) => {
-                const successMessage = response.props.flash?.success || 'Outlet created successfully'
+                const successMessage = response.props.flash?.success || 'Record created successfully'
                    toast.success(successMessage);
 
                     closeModal();
                 },
                 onError: (error: Record<string, string>) => {
-                     const errorMessage = error.message || 'Failed to create outlet'
+                     const errorMessage = error.message || 'Failed to create record'
                      toast.error(errorMessage);
     
                 }
@@ -181,7 +169,7 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
     const closeModal = () => {
         setMode('create');
         setPreviewImage(null);
-        setSelectedOutlet(null);
+        setSelectedGroup(null);
         reset();
         setModalOpen(false);
     };
@@ -192,25 +180,25 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
         if (!open) {
             setMode('create');
             setPreviewImage(null);
-            setSelectedOutlet(null);
+            setSelectedGroup(null);
             reset();
         }
     };
 
     // open modal
-    const openModal = (mode: 'create' | 'view' | 'edit', outlet?: any) => {
+    const openModal = (mode: 'create' | 'view' | 'edit', portion?: any) => {
         setMode(mode);
 
-        if (outlet) {
-            Object.entries(outlet).forEach(([key, value]) => {
+        if (portion) {
+            Object.entries(portion).forEach(([key, value]) => {
                 if (key !== 'image') {
                     setData(key as keyof typeof data, value as string | null);
                 }
             });
 
             // setting image preview
-            setPreviewImage(outlet.image);
-            setSelectedOutlet(outlet);
+            setPreviewImage(portion.image);
+            setSelectedGroup(portion);
         } else {
             // console.log(data);
         }
@@ -227,7 +215,7 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
         }
 
         // kirim querystring perpage to serverside php
-        router.get(route('outlets.index'), queryString, {
+        router.get(route('portions.index'), queryString, {
             preserveState: true,
             preserveScroll: true,
         })
@@ -236,20 +224,20 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Outlet" />
+            <Head title="Group" />
 
             <CustomToast />
 
             <div className='flex h-full flex-1 flex-col rounded-xl p-4'>
-
+                
                 {/* custom modal form */}
                 <div className='ml-auto w-full'>
                    <CustomModalForm 
-                   addButton={OutletModalFormConfig.addButton}
-                   title ={mode === 'view' ? 'View Outlet' : (mode === 'edit' ? 'Update Outlet' : OutletModalFormConfig.title)}
-                   description={OutletModalFormConfig.description}
-                   fields={OutletModalFormConfig.fields}
-                   buttons={OutletModalFormConfig.buttons}
+                   addButton={PortionModalFormConfig.addButton}
+                   title ={mode === 'view' ? 'View Group' : (mode === 'edit' ? 'Update Group' : PortionModalFormConfig.title)}
+                   description={PortionModalFormConfig.description}
+                   fields={PortionModalFormConfig.fields}
+                   buttons={PortionModalFormConfig.buttons}
                    data={data}
                    setData={setData}
                    errors={errors}
@@ -259,24 +247,25 @@ export default function Index({outlets, totalCount, filteredCount } : IndexProps
                    onOpenChange={handleModalToggle}
                    mode={mode}
                    previewImage={previewImage}
+                   extraData={props}
                    handleSearch={handleSearch}
                    handleReset={handleReset}
                    />
                 </div>
 
                 <CustomTable 
-                    columns={OutletTableConfig.columns} 
-                    actions={OutletTableConfig.actions} 
-                    data={outlets.data} 
-                    from={outlets.from} 
+                    columns={PortionTableConfig.columns} 
+                    actions={PortionTableConfig.actions} 
+                    data={datasources.data} 
+                    from={datasources.from} 
                     onDelete={handleDelete}
-                    onView={(outlet) => openModal('view', outlet)}
-                    onEdit={(outlet) => openModal('edit', outlet)}
+                    onView={(portion) => openModal('view', portion)}
+                    onEdit={(portion) => openModal('edit', portion)}
                     isModal={true}
                 />
 
                 <Pagination 
-                    sumber={outlets} 
+                    sumber={datasources} 
                     perPage={data.perPage} 
                     onPerPageChange={handlePerPageCange} 
                     totalCount={totalCount} 

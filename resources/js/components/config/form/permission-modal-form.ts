@@ -24,6 +24,11 @@ export const PermissionModalFormConfig = {
             autoFocus: true,
             options: [
                 { label: 'Outlets', value: 'outlets', key: 'outlets' },
+                { label: 'Groups', value: 'groups', key: 'groups' },
+                { label: 'Sub Groups', value: 'subgroups', key: 'subgroups' },
+                { label: 'Portions', value: 'portions', key: 'portions' },
+                { label: 'Currency', value: 'currency', key: 'currency' },
+                { label: 'Item', value: 'items', key: 'items' },
                 { label: 'Properties', value: 'properties', key: 'properties' },
                 { label: 'Users', value: 'users', key: 'users' },
                 { label: 'Permissions', value: 'permissions', key: 'permissions' },
@@ -65,7 +70,7 @@ export const PermissionModalFormConfig = {
         {
             key: 'submit',
             type: 'submit',
-            label: 'Save Permission',
+            label: 'Save',
             variant: 'default',
             className: 'cursor-pointer',
         },

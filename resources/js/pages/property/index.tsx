@@ -45,6 +45,7 @@ interface PropertyPagination {
     to: number;
     total: number;
 }
+
 interface FilterProps {
     search: string;
     perPage: string;
@@ -148,7 +149,7 @@ export default function Index({properties, filters, totalCount, filteredCount}: 
                     </Alert>
                 )}
 
-                <div className='mb-4 flex w-full items-center justify-between gap-4'>
+                <div className='mb-4 flex w-full items-center justify-between gap-2'>
                     {/* search button */}
                     <Input type="text" value={data.search} onChange={handleSearch} className="h-10 w-1/2" placeholder="Search Property..." name="search"/>
 
@@ -172,7 +173,7 @@ export default function Index({properties, filters, totalCount, filteredCount}: 
 
                 <Pagination sumber={properties} perPage={data.perPage} onPerPageChange={handlePerPageCange} totalCount={totalCount} filteredCount={filteredCount} search={data.search} />
 
-         </div>
+            </div>
         </AppLayout>
     );
 }

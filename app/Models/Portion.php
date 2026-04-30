@@ -7,7 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 class Portion extends Model
 {
     protected $fillable = [
-        'portion',
+        'name',
+        'description',
     ];
 
     public function items()

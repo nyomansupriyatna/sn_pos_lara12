@@ -15,12 +15,13 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
         $authUser = Auth::user();
         $authUserRole = $authUser->roles->first()?->name;
 
         $userQuery = User::with('roles')->latest();
+        $totalCount = $userQuery->count();
 
         if (! in_array($authUserRole, ['super-admin', 'admin', 'editor', 'user'])) {
             abort(403, 'Unauthorized Access Prevented');
@@ -39,6 +40,14 @@ class UserController extends Controller
                 $q->whereIn('name', ['user']);
             });
         }
+
+        $search = $request->search;
+        if ($request->filled("search")) {
+            $userQuery->where('name', 'like', "%{$search}%");
+        }
+
+        $filteredCount = $userQuery->count();
+        $perPage = (int) $request->perPage ?? 10;
 
         $users = $userQuery->paginate(10);
 
@@ -59,6 +68,9 @@ class UserController extends Controller
         return Inertia::render('users/index', [
             'users' => $users,
             'roles' => $roles,
+            'filteredCount' => $filteredCount,
+            'totalCount' => $totalCount,
+            'perPage' => $perPage,
         ]);
     }
 

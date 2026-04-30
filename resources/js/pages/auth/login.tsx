@@ -45,7 +45,7 @@ export default function Login({
                     <>
                         <div className="grid gap-6">
                             <div className="grid gap-2">
-                                <Label htmlFor="login">login or Username</Label>
+                                <Label htmlFor="login">login with Username</Label>
                                 <Input
                                     id="login"
                                     type="text"
@@ -60,20 +60,6 @@ export default function Login({
                                 />
                                 <InputError message={errors.login} />
                             </div>
-                            {/* <div className="grid gap-2">
-                                <Label htmlFor="email">Email atau User Name</Label>
-                                <Input
-                                    id="username"
-                                    type="username"
-                                    name="username"
-                                    required
-                                    autoFocus
-                                    tabIndex={1}
-                                    autoComplete="username"
-                                    placeholder="User name"
-                                />
-                                <InputError message={errors.username} />
-                            </div> */}
 
                             <div className="grid gap-2">
                                 <div className="flex items-center">

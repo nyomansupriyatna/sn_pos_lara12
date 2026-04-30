@@ -7,11 +7,17 @@ use Illuminate\Database\Eloquent\Model;
 class Group extends Model
 {
     protected $fillable = [
-        'group',
+        'name',
+        'description',
     ];
 
     public function items()
     {
         return $this->hasMany(Item::class);
+    }
+
+    public function subgroups()
+    {
+        return $this->hasMany(Subgroup::class);
     }
 }

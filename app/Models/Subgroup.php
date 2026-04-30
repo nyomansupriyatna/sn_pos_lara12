@@ -8,11 +8,17 @@ class Subgroup extends Model
 {
     protected $fillable = [
         'group_id',
-        'subgroup',
+        'name',
+        'description',
     ];
 
     public function items()
     {
         return $this->hasMany(Item::class);
+    }
+
+    public function groups()
+    {
+        return $this->belongsTo(Group::class, 'group_id');
     }
 }

@@ -1,29 +1,28 @@
 import { CirclePlus } from "lucide-react";
 
-export const RoleModalFormConfig = {
-    moduleTitle: 'Manage Role',
-    title: 'Create Role',
-    search_label: 'Search Role Name....',
-    description: 'Fill in details below to create a new roles.',
+export const PortionModalFormConfig = {
+    moduleTitle: 'Manage Portion',
+    title: 'Create Portion',
+    description: 'Fill in details below to create a new permissions.',
     addButton: {
-        id: 'add-role',
-        label: 'Add Role',
+        id: 'add-portions',
+        label: 'Add',
         className: 'bg-indigo-700 text-white rounded-lg px-4 py-2 hover:bg-indigo-800 cursor-pointer',
         icon: CirclePlus,
         type: 'button',
         variant: 'default',
-        permission: 'create-role',
+        permission: 'create-portion',
     },
     fields: [
         {
-            id: 'role-label',
-            key: 'label',
-            name: 'label',
-            label: 'Role Label (ex. Super Admin)',
+            id: 'portion-name',
+            key: 'name',
+            name: 'name',
+            label: 'Portion Name',
             type: 'text',
-            placeholder: 'Enter role label',
-            autocomplete: 'label',
-            tabIndex: 1,
+            placeholder: 'Enter Portion Name',
+            autocomplete: 'name',
+            tabIndex: 2,
         },
         {
             id: 'description',
@@ -32,19 +31,11 @@ export const RoleModalFormConfig = {
             label: 'Description',
             type: 'textarea',
             className: 'border rounded-md px-2',
-            placeholder: 'Enter role description',
+            placeholder: 'Enter permission description',
             autocomplete: 'description',
-            tabIndex: 2,
+            tabIndex: 3,
             rows: 2,
             autoFocus: true,
-        },
-        {
-            id: 'permissions',
-            key: 'permissions',
-            name: 'permissions[]',
-            label: 'Permissions',
-            type: 'grouped-checkboxes',
-            tabIndex: 3,
         }
     ],
     buttons: [
@@ -63,6 +54,4 @@ export const RoleModalFormConfig = {
             className: 'cursor-pointer',
         },
     ],
-
-
 }

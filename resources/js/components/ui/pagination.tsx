@@ -1,6 +1,6 @@
 import { Link } from "@inertiajs/react"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import properties from "@/routes/properties";
+// import properties from "@/routes/properties";
 
 interface LinkProps {
     active: boolean;
@@ -27,7 +27,7 @@ interface PaginationProps {
 
 export const Pagination = ({ sumber, perPage, onPerPageChange, totalCount, filteredCount, search } : PaginationProps) => {
     
-    console.log(totalCount, filteredCount, search);
+    // console.log(totalCount, filteredCount, search);
 
     return (
         <div className="flex items-center justify-between mt-2">

@@ -3,6 +3,7 @@ import { CirclePlus } from "lucide-react";
 export const UserModalFormConfig = {
     moduleTitle: 'Manage User',
     title: 'Create User',
+    search_label: 'Search User Name....',
     description: 'Fill in details below to create a new users.',
     addButton: {
         id: 'add-user',
@@ -76,7 +77,7 @@ export const UserModalFormConfig = {
         {
             key: 'submit',
             type: 'submit',
-            label: 'Save User',
+            label: 'Save',
             variant: 'default',
             className: 'cursor-pointer',
         },

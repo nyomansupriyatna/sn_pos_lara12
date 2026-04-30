@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('portions', function (Blueprint $table) {
             $table->id();
-            $table->string('portion');
+            $table->string('name');
+            $table->string('description');
             $table->timestamps();
         });
     }
@@ -23,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('portions');
+        Schema::dropIfExists('name');
     }
 };

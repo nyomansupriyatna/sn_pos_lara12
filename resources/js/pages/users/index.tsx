@@ -64,7 +64,7 @@ interface IndexProps {
 }
 
 
-export default function Index({ users } : IndexProps) {
+export default function Index({ users, totalCount, filteredCount } : IndexProps) {
     const { flash } = usePage<{flash?: {success?: string; error?: string} }>().props ;
     const flashMessage = flash?.success || flash?.error;
     const [ modalOpen, setModalOpen ] = useState(false);
@@ -72,21 +72,56 @@ export default function Index({ users } : IndexProps) {
     const [ selectedUser, setSelectedUser ] = useState<any>(null);
     const { props } = usePage();
 
-    const {data, setData, errors, processing, reset, post} = useForm<{
-        name: string;
-        email: string;
-        password: string;
-        confirm_password: string;
-        roles: string[];
-        _method: string;
-    }>({
-        name:'',
-        email: '',
-        password: '',
-        confirm_password: '',
-        roles: [],
-        _method: 'POST'
+    // console.log('props->', props);
+
+    // const {data, setData, errors, processing, reset, post} = useForm<{
+    //     name: string;
+    //     email: string;
+    //     password: string;
+    //     confirm_password: string;
+    //     roles: string[];
+    //     _method: string;
+    // }>({
+    //     name:'',
+    //     email: '',
+    //     password: '',
+    //     confirm_password: '',
+    //     roles: [],
+    //     _method: 'POST'
+    // });
+
+    const { data, setData, errors, processing, reset, post } = useForm ({
+        search: '',
+        perPage: '10',
     });
+
+        const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setData('search', value);
+
+        const queryString =  {
+            ...(value && {search: value}),
+            ...(data.perPage && {perPage: data.perPage}),
+        }
+
+        router.get(route('users.index'), queryString, {
+            preserveState: true,
+            preserveScroll: true,
+
+        })
+
+    }
+
+    // reset search
+    const handleReset = () => {
+        setData('search', '');
+        setData('perPage', '10');
+
+        router.get(route('users.index'), {}, {
+            preserveState: true,
+            preserveScroll: true,
+        })
+    }
 
     // handle delete
     const handleDelete = (route: string) => {
@@ -106,22 +141,15 @@ export default function Index({ users } : IndexProps) {
     
                 }
             });
-            // toast.success(flashMessage);
         }
     }
 
     const handleSubmit = (e: React.ChangeEvent) => {
         e.preventDefault();
 
-       
-
-        // edit mode
         if (mode === 'edit' && selectedUser) {
 
             data._method = 'PUT';
-
-            // console.log('selectedUser--', selectedUser.id);
-            // return;
 
             post(route('users.update', selectedUser.id), {
                 forceFormData: true,
@@ -140,9 +168,6 @@ export default function Index({ users } : IndexProps) {
 
         // create or store mode
         } else {
-
-            // console.log('data--', data);
-            // return;
 
             post(route('users.store'), {
                onSuccess: (response: {props: FlashProps}) => {
@@ -192,13 +217,29 @@ export default function Index({ users } : IndexProps) {
             });
 
             // setting image preview
-            // setPreviewImage(outletoutlet.image);
+            // setPreviewImage(outlet.image);
             setSelectedUser(outlet);
         } else {
             // console.log(data);
         }
 
         setModalOpen(true);
+    }
+
+    const handlePerPageCange = (value: string) => {
+        setData('perPage', value);
+
+        const queryString =  {
+            ...(data.search && {search: data.search}),
+            ...(value && {perPage: value}),
+        }
+
+        // kirim querystring perpage to serverside php
+        router.get(route('subgroups.index'), queryString, {
+            preserveState: true,
+            preserveScroll: true,
+        })
+
     }
 
     return (
@@ -210,12 +251,13 @@ export default function Index({ users } : IndexProps) {
             <div className='flex h-full flex-1 flex-col rounded-xl p-4'>
 
                 {/* custom modal form */}
-                <div className='ml-auto'>
+                <div className='ml-auto w-full'>
                    <CustomModalForm 
                    addButton={UserModalFormConfig.addButton}
                    title ={mode === 'view' ? 'View User' : (mode === 'edit' ? 'Update User' : UserModalFormConfig.title)}
                    description={UserModalFormConfig.description}
                    fields={UserModalFormConfig.fields}
+                   search_label={UserModalFormConfig.search_label}
                    buttons={UserModalFormConfig.buttons}
                    data={data}
                    setData={setData}
@@ -226,6 +268,8 @@ export default function Index({ users } : IndexProps) {
                    onOpenChange={handleModalToggle}
                    mode={mode}
                    extraData={props}
+                   handleSearch={handleSearch}
+                   handleReset={handleReset}
                    />
                 </div>
 
@@ -239,7 +283,17 @@ export default function Index({ users } : IndexProps) {
                     onEdit={(user) => openModal('edit', user)}
                     isModal={true}
                 />
-         </div>
+
+                 <Pagination 
+                    sumber={users} 
+                    perPage={data.perPage} 
+                    onPerPageChange={handlePerPageCange} 
+                    totalCount={totalCount} 
+                    filteredCount={filteredCount} 
+                    search={data.search} 
+                />
+
+            </div>
         </AppLayout>
     );
 }

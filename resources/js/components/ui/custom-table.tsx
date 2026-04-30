@@ -37,7 +37,8 @@ interface CustomTableProps {
 
 export const CustomTable = ({ columns, actions, data, from, onDelete, onView, onEdit, isModal }: CustomTableProps) => {
 
-    // console.log('Action-->', actions);
+    // console.log('onEdit-->', onEdit);
+
     const { auth } = usePage().props as any;
     const roles = auth.roles;
     const permissions = auth.permissions;
@@ -88,6 +89,8 @@ export const CustomTable = ({ columns, actions, data, from, onDelete, onView, on
             </div>
         )
     }
+
+    // console.log('data table->', data)
 
     return (
          <div className="m-2 overflow-scroll border rounded-md">

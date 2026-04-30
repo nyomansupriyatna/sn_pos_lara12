@@ -62,26 +62,64 @@ interface IndexProps {
 }
 
 
-export default function Index({ roles } : IndexProps) {
+export default function Index({ roles, totalCount, filteredCount } : IndexProps) {
     const { flash } = usePage<{flash?: {success?: string; error?: string} }>().props ;
     const flashMessage = flash?.success || flash?.error;
     const [ modalOpen, setModalOpen ] = useState(false);
     const [ mode, setMode ] = useState<'create' | 'view' | 'edit'>('create');
     const [ selectedOutlet, setSelectedOutlet ] = useState<any>(null);
     const { permissions } = usePage().props;
-    console.log(permissions);
+    // console.log(permissions);
 
     const {data, setData, errors, processing, reset, post} = useForm<{
         label: string;
         description: string;
         permissions: string[];
         _method: string;
+        search: string;
+        perPage: string;
     }>({
         label: '',
         description:'',
         permissions: [],
-        _method: 'POST'
+        _method: 'POST',
+        search: '',
+        perPage: '10',
     });
+
+    // const { data, setData, errors, processing, reset, post } = useForm ({
+    //     search: '',
+    //     perPage: '10',
+    // });
+    
+    
+    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setData('search', value);
+
+        const queryString =  {
+            ...(value && {search: value}),
+            ...(data.perPage && {perPage: data.perPage}),
+        }
+
+        router.get(route('roles.index'), queryString, {
+            preserveState: true,
+            preserveScroll: true,
+
+        })
+
+    }
+
+    // reset search
+    const handleReset = () => {
+        setData('search', '');
+        setData('perPage', '10');
+
+        router.get(route('roles.index'), {}, {
+            preserveState: true,
+            preserveScroll: true,
+        })
+    }
 
     // handle delete
     const handleDelete = (route: string) => {
@@ -188,6 +226,22 @@ export default function Index({ roles } : IndexProps) {
         setModalOpen(true);
     }
 
+     const handlePerPageCange = (value: string) => {
+        setData('perPage', value);
+
+        const queryString =  {
+            ...(data.search && {search: data.search}),
+            ...(value && {perPage: value}),
+        }
+
+        // kirim querystring perpage to serverside php
+        router.get(route('portion.index'), queryString, {
+            preserveState: true,
+            preserveScroll: true,
+        })
+
+    }
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Outlet" />
@@ -197,13 +251,14 @@ export default function Index({ roles } : IndexProps) {
             <div className='flex h-full flex-1 flex-col rounded-xl p-4'>
 
                 {/* custom modal form */}
-                <div className='ml-auto'>
+                <div className='ml-auto w-full'>
                    <CustomModalForm 
                    addButton={RoleModalFormConfig.addButton}
                    title ={mode === 'view' ? 'View Permission' : (mode === 'edit' ? 'Update Role' : RoleModalFormConfig.title)}
                    description={RoleModalFormConfig.description}
                    fields={RoleModalFormConfig.fields}
                    buttons={RoleModalFormConfig.buttons}
+                   search_label={RoleModalFormConfig.search_label}
                    data={data}
                    setData={setData}
                    errors={errors}
@@ -213,6 +268,8 @@ export default function Index({ roles } : IndexProps) {
                    onOpenChange={handleModalToggle}
                    mode={mode}
                    extraData={permissions}
+                   handleSearch={handleSearch}
+                   handleReset={handleReset}
                    />
                 </div>
 
@@ -225,6 +282,15 @@ export default function Index({ roles } : IndexProps) {
                     onView={(role) => openModal('view', role)}
                     onEdit={(role) => openModal('edit', role)}
                     isModal={true}
+                />
+
+                 <Pagination 
+                    sumber={roles} 
+                    perPage={data.perPage} 
+                    onPerPageChange={handlePerPageCange} 
+                    totalCount={totalCount} 
+                    filteredCount={filteredCount} 
+                    search={data.search} 
                 />
          </div>
         </AppLayout>

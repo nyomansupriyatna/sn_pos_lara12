@@ -26,26 +26,26 @@ class Item extends Model
 
     public function outlet()
     {
-        return $this->belongsTo(Outlet::class);
+        return $this->belongsTo(Outlet::class, 'outlet_id');
     }
 
     public function group()
     {
-        return $this->belongsTo(Group::class);
+        return $this->belongsTo(Group::class, 'group_id');
     }
 
     public function subgroup()
     {
-        return $this->belongsTo(Subgroup::class);
+        return $this->belongsTo(Subgroup::class, 'subgroup_id');
     }
 
     public function portion()
     {
-        return $this->belongsTo(Portion::class);
+        return $this->belongsTo(Portion::class, 'portion_id');
     }
 
     public function currency()
     {
-        return $this->belongsTo(Currency::class);
+        return $this->belongsTo(Currency::class, 'currency_id');
     }
 }

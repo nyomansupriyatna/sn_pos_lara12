@@ -1,6 +1,6 @@
 export const PermissionTableConfig = {
     columns: [
-        { label: 'Permission Name', key: 'label', className: 'border p-4' },
+        { label: 'Permission Label', key: 'label', className: 'border p-4' },
         { label: 'Module', key: 'module', className: 'capitalize border p-4' },
         { label: 'Description', key: 'description', className: 'w-90 border p-4' },
         { label: 'Actions', key: 'actions', isAction: true, className: 'border p-4' }

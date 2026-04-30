@@ -60,7 +60,7 @@ export const OutletModalFormConfig = {
         {
             key: 'submit',
             type: 'submit',
-            label: 'Save Outlet',
+            label: 'Save',
             variant: 'default',
             className: 'cursor-pointer',
         },

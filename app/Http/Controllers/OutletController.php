@@ -15,10 +15,29 @@ class OutletController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
+        $outlets = Outlet::paginate($request->perPage)->withQueryString();
+        $totalCount = $outlets->count();
+
+        $search = $request->search;
+        if ($request->filled("search")) {
+            $outlets = Outlet::where(
+                fn($query) =>
+                $query->where('outlet', 'like', "%{$search}%")
+                    ->orWhere('tax', 'like', "%{$search}%")
+                    ->orWhere('service', 'like', "%{$search}%")
+            )->paginate($request->perPage);
+        }
+
+        $filteredCount = $outlets->count();
+        $perPage = (int) $request->perPage ?? 10;
+
         return Inertia::render('outlet/index', [
-            'outlets' => Outlet::paginate(10)->withQueryString(),
+            'outlets' => $outlets,
+            'filteredCount' => $filteredCount,
+            'totalCount' => $totalCount,
+            'perPage' => $perPage,
         ]);
     }
 
