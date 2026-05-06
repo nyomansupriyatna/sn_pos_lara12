@@ -106,7 +106,7 @@ export const CustomTable = ({ columns, actions, data, from, onDelete, onView, on
                     </tr>
                 </thead>
                 <tbody>
-                    {data.length > 0 ? (
+                    {data?.length > 0 ? (
                         data.map((row, index) => (
                         <tr key={index}>
                             <td className="border px-4 py-2 text-center">{from + index}</td>

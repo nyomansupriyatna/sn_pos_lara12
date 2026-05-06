@@ -11,6 +11,7 @@ import { Input } from '@/components/ui/input';
 import { Pagination } from '@/components/ui/pagination';
 import AppLayout from '@/layouts/app-layout';
 import type { BreadcrumbItem } from '@/types';
+import { Card } from '@/components/ui/card';
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -46,92 +47,31 @@ interface PropertyPagination {
     total: number;
 }
 
-interface FilterProps {
-    search: string;
-    perPage: string;
-}
 
 interface IndexProps {
     properties: PropertyPagination;
-    filters: FilterProps;
-    totalCount: number;
-    filteredCount: number;
+
 }
 
 
-export default function Index({properties, filters, totalCount, filteredCount}: IndexProps ) {
-   
-    // console.log(filters);
-    // const { properties }  = props;
+export default function Index({ datasources }: IndexProps ) {
     const { flash } = usePage<{flash?: {success?: string; error?: string} }>().props ;
     const flashMessage = flash?.success || flash?.error;
     const [ showAlert, setShowAlert ] = useState(flashMessage ? true : false);
 
-    useEffect(() => {
-        if (flashMessage) {
-            const timer = setTimeout(() => setShowAlert(false), 3000);
-            return () => clearTimeout(timer);
-        }
-    },[flashMessage]);
 
     const { data, setData } = useForm ({
-        search: filters.search || '',
-        perPage: filters.perPage || '10',
+        name: '',
+        category: '',
+        address: '',
+        city: '',
+        contact: '',
+        phone: '',
+        email: '',
+        logo: '',
+        search: '',
+        perPage: '',
     });
-
-    const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const value = e.target.value;
-        setData('search', value);
-
-        const queryString =  {
-            ...(value && {search: value}),
-            ...(data.perPage && {perPage: data.perPage}),
-        }
-
-        router.get(route('properties.index'), queryString, {
-            preserveState: true,
-            preserveScroll: true,
-
-        })
-
-    }
-
-    // reset search
-    const handleReset = () => {
-        setData('search', '');
-        setData('perPage', '10');
-
-        router.get(route('properties.index'), {}, {
-            preserveState: true,
-            preserveScroll: true,
-        })
-    }
-
-    const handlePerPageCange = (value: string) => {
-        // console.log(value)
-        setData('perPage', value);
-
-        const queryString =  {
-            ...(data.search && {search: data.search}),
-            ...(value && {perPage: value}),
-        }
-
-        // kirim querystring perpage to serverside php
-        router.get(route('properties.index'), queryString, {
-            preserveState: true,
-            preserveScroll: true,
-        })
-
-    }
-
-    // handle delete
-    const handleDelete = (id: number, route: string) => {
-        if (confirm('Are you sure, you want to delete?')) {
-            router.delete(route, {
-                preserveScroll: true,
-            });
-        }
-    }
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -149,30 +89,33 @@ export default function Index({properties, filters, totalCount, filteredCount}: 
                     </Alert>
                 )}
 
-                <div className='mb-4 flex w-full items-center justify-between gap-2'>
-                    {/* search button */}
-                    <Input type="text" value={data.search} onChange={handleSearch} className="h-10 w-1/2" placeholder="Search Property..." name="search"/>
-
-                    <Button onClick={handleReset} className='h-10 cursor-pointer bg-red-600 hover:bg-red-500'>
-                        <X size={20} />
-                    </Button>
-                    {/* add property button*/}
-                    <div className="ml-auto flex gap-2">
-                        <Link 
-                            as='button' 
-                            href={route('properties.create')}
-                            className='flex gap-2 bg-tambah rounded-lg p-2 text-white hover:opacity-90'
-                            >
-                            <CirclePlusIcon/>
-                            Create Property
-                        </Link>
-                    </div>
+               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {/* ------------------------- */}
+            <div className="max-w-md mx-auto bg-white shadow-xl rounded-2xl overflow-hidden border border-gray-300">
+                <div className="bg-blue-500 h-24 flex items-center justify-center">
+                    <span className="text-white text-xl font-semibold">
+                        {datasources.name}
+                    </span>
                 </div>
 
-                <CustomTable columns={PropertyTableConfig.columns} actions={PropertyTableConfig.actions} data={properties.data} from={properties.from} onDelete={handleDelete}/>
+                <p className="text-gray-600 mb-4 mt-2 flex justify-center font-extrabold text-xl">
+                    {datasources.category}
+                </p>
+                <div className="p-6">
 
-                <Pagination sumber={properties} perPage={data.perPage} onPerPageChange={handlePerPageCange} totalCount={totalCount} filteredCount={filteredCount} search={data.search} />
+                    <div className="space-y-2 text-sm">
+                        <p>Alamat 📍 : {datasources.address}</p>
+                        <p>Kota : {datasources.city}</p>
+                        <p>Phone 📞 : {datasources.phone}</p>
+                        <p>Contact : {datasources.contact}</p>
+                        <p>Email 📧 : {datasources.email}</p>
+                        <p>logo: {datasources.logo}</p>
+                    </div>
+                </div>
+            </div>
 
+            {/* ------------------------------ */}
+                </div>
             </div>
         </AppLayout>
     );

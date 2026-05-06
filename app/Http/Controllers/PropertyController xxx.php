@@ -18,12 +18,77 @@ class PropertyController extends Controller
      */
     public function index(Request $request)
     {
-        // $xxx = Property::first()->get();
+        // dump($request->all());
+        // dd($request->all());
 
-        // dd($xxx);
+        $propertiesQuery = Property::query();
+
+        // capturing to total count before applying filters
+        $totalCount = Property::query()->count();
+
+        if ($request->filled("search")) {
+            $search = $request->search;
+            $propertiesQuery->where(
+                fn($query) =>
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('category', 'like', "%{$search}%")
+                    ->orWhere('address', 'like', "%{$search}%")
+                    ->orWhere('city', 'like', "%{$search}%")
+                    ->orWhere('contact', 'like', "%{$search}%")
+                    ->orWhere('phone', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%")
+            );
+        }
+
+        $filteredCount = $propertiesQuery->count();
+
+        $perPage = (int) $request->perPage ?? 10;
+
+        // fecth all record 
+        if ($perPage === -1) {
+            $propertiesQuery->latest()->get()->map(fn($property) => [
+                'id' => $property->id,
+                'name' => $property->name,
+                'category' => $property->category,
+                'address' => $property->address,
+                'city' => $property->city,
+                'contact' => $property->contact,
+                'phone' => $property->phone,
+                'email' => $property->email,
+                'logo' => $property->logo,
+                'created_at' => $property->created_at->format('d M Y'),
+            ]);
+
+            $properties = [
+                'data' => $propertiesQuery,
+                'totalCount' => $totalCount,
+                'filteredCount' => $filteredCount,
+                'per_page' => $perPage,
+                'from' => 1,
+                'to' => $filteredCount,
+                'links' => [],
+            ];
+        } else {
+            $propertiesQuery = Property::latest()->paginate($perPage)->withQueryString();
+            $properties = $propertiesQuery->getCollection()->transform(fn($property) => [
+                'id' => $property->id,
+                'name' => $property->name,
+                'category' => $property->category,
+                'address' => $property->address,
+                'city' => $property->city,
+                'contact' => $property->contact,
+                'phone' => $property->phone,
+                'email' => $property->email,
+                'logo' => $property->logo,
+                'created_at' => $property->created_at->format('d M Y'),
+            ]);
+        }
 
         return Inertia::render('property/index', [
-            'datasources' => Property::first(),
+            'properties' => Property::latest()->get(),
+            // 'filters' => $request->only(['search', 'perPage']),
+            // 'totalCount' => $totalCount,
+            // 'filteredCount' => $filteredCount,
         ]);
     }
 

@@ -59,7 +59,7 @@ export const Pagination = ({ sumber, perPage, onPerPageChange, totalCount, filte
             </div>
 
             <div className="flex items-center gap-2">
-                {sumber.links.map((link, index) => (
+                {sumber?.links.map((link, index) => (
                     <Link
                     className={`px-3 py-2 border rounded-md ${link.active ? 'bg-amber-500 text-white' : ''}`}
                         href={link.url || '#'}

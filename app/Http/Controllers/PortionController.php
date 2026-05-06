@@ -31,8 +31,6 @@ class PortionController extends Controller
             );
         }
 
-
-
         $filteredCount = $portionQuery->count();
         $perPage = (int) $request->perPage ?? 10;
 

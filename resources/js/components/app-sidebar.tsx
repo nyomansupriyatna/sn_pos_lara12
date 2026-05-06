@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid, AppWindow, Bolt, Settings, Lock, Shield, User, Home, Group, CircleArrowOutUpLeft, AlignVerticalJustifyStart, Coffee } from 'lucide-react';
+import { BookOpen, Folder, LayoutGrid,  Lock, Shield, User, Home, Group, CircleArrowOutUpLeft, AlignVerticalJustifyStart, Coffee, CircleDollarSign  } from 'lucide-react';
 import { useState } from 'react';
 import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
@@ -67,11 +67,22 @@ const mainNavItems: NavItem[] = [
         permission: 'access-portions-module'
     },
     {
+        title: 'Currency',
+        href: '/currencies',
+        icon: CircleDollarSign,
+        permission: 'access-currencies-module'
+    },
+    {
         title: 'Property',
         href: '/properties',
         icon: Home ,
         permission: 'access-properties-module'
     },
+    // {
+    //     title: 'Product',
+    //     href: '/prod',
+    //     icon: Home ,
+    // },
 
 ];
 

@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CurrencyController;
 use App\Http\Controllers\printServerController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ProductController;
@@ -34,12 +35,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('groups', GroupController::class)->middleware('permission:access-groups-module');
     Route::resource('subgroups', SubGroupController::class)->middleware('permission:access-subgroups-module');
     Route::resource('portions', PortionController::class)->middleware('permission:access-portions-module');
+    Route::resource('currencies', CurrencyController::class)->middleware('permission:access-currencies-module');
 
-    Route::get('/prod', [ProductController::class, 'index']);
-    Route::get('/products', [ProductController::class, 'getData']);
-    Route::post('/products', [ProductController::class, 'store']);
-    Route::post('/products/{product}', [ProductController::class, 'update']);
-    Route::delete('/products/{product}', [ProductController::class, 'destroy']);
+    // Route::get('/prod', [ProductController::class, 'index']);
+    // Route::get('/products', [ProductController::class, 'getData']);
+    // Route::post('/products', [ProductController::class, 'store']);
+    // Route::post('/products/{product}', [ProductController::class, 'update']);
+    // Route::delete('/products/{product}', [ProductController::class, 'destroy']);
 
     Route::get('/print', [printServerController::class, 'print']);
 });

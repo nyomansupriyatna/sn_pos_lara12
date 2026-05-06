@@ -94,6 +94,7 @@ function App() {
                 </button>
             </form>
 
+   
             <div className="grid grid-cols-3 gap-4">
                 {products.map((p) => (
                     <div key={p.id} className="border p-3 rounded shadow">
@@ -131,7 +132,7 @@ function App() {
 }
 
 export default App
-function post(arg0: string) {
+function post(67arg0: string) {
     throw new Error("Function not implemented.")
 }
 
