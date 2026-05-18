@@ -24,8 +24,9 @@ class CurrencyController extends Controller
         if ($request->filled("search")) {
             $currencies = Currency::where(
                 fn($query) =>
-                $query->where('currency', 'like', "%{$search}%")
+                $query->where('name', 'like', "%{$search}%")
                     ->orWhere('exc_rate', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
             )->orderBy('currency')->paginate($request->perPage);
         }
 
@@ -33,9 +34,9 @@ class CurrencyController extends Controller
         $perPage = (int) $request->perPage ?? 10;
 
         if ($perPage === -1) {
-            $allCurrency = Currency::orderBy('currency')->get()->map(fn($currency) => [
+            $allCurrency = Currency::orderBy('name')->get()->map(fn($currency) => [
                 'id' => $currency->id,
-                'currency' => $currency->currency,
+                'name' => $currency->name,
                 'exc_rate' => number_format($currency->exc_rate, 0),
             ]);
 
@@ -50,14 +51,16 @@ class CurrencyController extends Controller
         } else {
             $currencies =  Currency::where(
                 fn($query) =>
-                $query->where('currency', 'like', "%{$search}%")
+                $query->where('name', 'like', "%{$search}%")
                     ->orWhere('exc_rate', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
             )->orderBy('currency')->paginate($perPage)->withQueryString();
 
             $currencies->getCollection()->transform(fn($group) => [
                 'id' => $group->id,
-                'currency' => $group->currency,
+                'name' => $group->name,
                 'exc_rate' => number_format($group->exc_rate, 0),
+                'description' => $group->description,
             ]);
         }
 
@@ -80,8 +83,9 @@ class CurrencyController extends Controller
 
         try {
             $currency = Currency::create([
-                'currency' => $request->currency,
+                'name' => $request->name,
                 'exc_rate' => $request->exc_rate,
+                'description' => $request->description,
             ]);
 
             if ($currency) {
@@ -99,8 +103,9 @@ class CurrencyController extends Controller
     public function update(CurrencyRequest $request, Currency $currency)
     {
         try {
-            $currency->currency = $request->currency;
+            $currency->name = $request->name;
             $currency->exc_rate = $request->exc_rate;
+            $currency->description = $request->description;
             $currency->save();
 
             if ($currency) {

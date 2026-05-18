@@ -15,13 +15,13 @@ export const CurrencyModalFormConfig = {
     },
     fields: [
         {
-            id: 'currency',
-            key: 'currency',
-            name: 'currency',
+            id: 'name',
+            key: 'name',
+            name: 'name',
             label: 'Currency Name',
             type: 'text',
             placeholder: 'Enter Currency Name',
-            autocomplete: 'currency',
+            autocomplete: 'name',
             tabIndex: 1,
         },
         {
@@ -29,13 +29,23 @@ export const CurrencyModalFormConfig = {
             key: 'exc_rate',
             name: 'exc_rate',
             label: 'Exchange Rate',
-            type: 'text',
+            type: 'number',
             className: 'border rounded-md px-2',
             placeholder: 'Enter Exchange Rate',
             autocomplete: 'exc_rate',
             tabIndex: 2,
             autoFocus: true,
-        }
+        },
+        {
+            id: 'description',
+            key: 'description',
+            name: 'description',
+            label: 'Description',
+            type: 'text',
+            placeholder: 'Enter Description',
+            autocomplete: 'description',
+            tabIndex: 3,
+        },
     ],
     buttons: [
         {

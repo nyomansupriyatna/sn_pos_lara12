@@ -16,12 +16,12 @@ export const OutletModalFormConfig = {
     fields: [
         {
             id: 'outlet-name',
-            key: 'outlet',
-            name: 'outlet',
+            key: 'name',
+            name: 'name',
             label: 'Outlet Name',
             type: 'text',
             placeholder: 'Enter outlet name',
-            autocomplete: 'outlet',
+            autocomplete: 'name',
             tabIndex: 1,
             autoFocus: true,
             className: 'rounded border p-2 w-full',
@@ -47,7 +47,19 @@ export const OutletModalFormConfig = {
             autocomplete: 'tax',
             tabIndex: 3,
             autoFocus: true,
-        }
+        },
+        {
+            id: 'outlet-desc',
+            key: 'description',
+            name: 'description',
+            label: 'Outlet Description',
+            type: 'text',
+            placeholder: 'Enter outlet description',
+            autocomplete: 'description',
+            tabIndex: 1,
+            autoFocus: true,
+            className: 'rounded border p-2 w-full',
+        },
     ],
     buttons: [
         {

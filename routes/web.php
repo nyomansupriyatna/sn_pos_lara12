@@ -5,6 +5,7 @@ use App\Http\Controllers\printServerController;
 use App\Http\Controllers\PropertyController;
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\GroupController;
+use App\Http\Controllers\ItemController;
 use App\Http\Controllers\OutletController;
 use App\Http\Controllers\PermissionController;
 use App\Http\Controllers\PortionController;
@@ -36,6 +37,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('subgroups', SubGroupController::class)->middleware('permission:access-subgroups-module');
     Route::resource('portions', PortionController::class)->middleware('permission:access-portions-module');
     Route::resource('currencies', CurrencyController::class)->middleware('permission:access-currencies-module');
+    Route::resource('items', ItemController::class);
 
     // Route::get('/prod', [ProductController::class, 'index']);
     // Route::get('/products', [ProductController::class, 'getData']);

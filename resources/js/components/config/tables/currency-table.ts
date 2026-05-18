@@ -1,7 +1,8 @@
 export const CurrencyTableConfig = {
     columns: [
-        { label: 'Currency Name', key: 'currency', className: 'border p-4' },
+        { label: 'Currency Name', key: 'name', className: 'border p-4' },
         { label: 'Exchange Rate', key: 'exc_rate', className: 'border p-4' },
+        { label: 'Description', key: 'description', className: 'border p-4' },
         { label: 'Actions', key: 'actions', isAction: true, className: 'border p-4' }
     ],
     actions: [

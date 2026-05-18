@@ -18,9 +18,9 @@ return new class extends Migration
             $table->foreignId('subgroup_id')->constrained()->onDelete('restrict');
             $table->foreignId('portion_id')->constrained()->onDelete('restrict');
             $table->string('name');
-            $table->string('descripton')->nullable();
+            $table->string('description')->nullable();
             $table->foreignId('currency_id')->constrained()->onDelete('restrict');
-            $table->decimal('price');
+            $table->decimal('price')->default(0);
             $table->string('happy_hour_price')->nullable();
             $table->decimal('cost_percentage')->nullable();
             $table->string('recipe_code')->nullable();

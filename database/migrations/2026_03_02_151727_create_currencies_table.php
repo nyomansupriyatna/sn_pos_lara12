@@ -13,8 +13,9 @@ return new class extends Migration
     {
         Schema::create('currencies', function (Blueprint $table) {
             $table->id();
-            $table->string('currency');
-            $table->decimal('exc_rate');
+            $table->string('name');
+            $table->decimal('exc_rate', 2);
+            $table->string('description');
             $table->timestamps();
         });
     }

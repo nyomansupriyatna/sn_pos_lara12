@@ -37,8 +37,6 @@ interface CustomTableProps {
 
 export const CustomTable = ({ columns, actions, data, from, onDelete, onView, onEdit, isModal }: CustomTableProps) => {
 
-    // console.log('onEdit-->', onEdit);
-
     const { auth } = usePage().props as any;
     const roles = auth.roles;
     const permissions = auth.permissions;

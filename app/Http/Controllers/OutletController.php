@@ -24,9 +24,10 @@ class OutletController extends Controller
         if ($request->filled("search")) {
             $outlets = Outlet::where(
                 fn($query) =>
-                $query->where('outlet', 'like', "%{$search}%")
+                $query->where('name', 'like', "%{$search}%")
                     ->orWhere('tax', 'like', "%{$search}%")
                     ->orWhere('service', 'like', "%{$search}%")
+                    ->orWhere('description', 'like', "%{$search}%")
             )->paginate($request->perPage);
         }
 
@@ -56,12 +57,14 @@ class OutletController extends Controller
      */
     public function store(OutletRequest $request)
     {
+        // dd($request->all());
 
         try {
             $outlet = Outlet::create([
-                'outlet' => $request->outlet,
+                'name' => $request->name,
                 'service' => $request->service,
                 'tax' => $request->tax,
+                'description' => $request->description,
             ]);
 
             if ($outlet) {
@@ -101,6 +104,7 @@ class OutletController extends Controller
     public function update(OutletRequest $request, Outlet $outlet)
     {
         // dd($request->all());
+
         try {
             $outletImagePath = null;
 
@@ -108,9 +112,10 @@ class OutletController extends Controller
                 $outletImagePath = $request->file('image')->store('outlets', 'public');
             }
 
-            $outlet->outlet = $request->outlet;
+            $outlet->name = $request->name;
             $outlet->service = $request->service;
             $outlet->tax = $request->tax;
+            $outlet->description = $request->description;
 
             if ($outletImagePath) {
                 $outlet->image = $outletImagePath;

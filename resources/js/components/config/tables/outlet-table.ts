@@ -1,8 +1,9 @@
 export const OutletTableConfig = {
     columns: [
-        { label: 'Outlet Name', key: 'outlet', className: 'border p-4' },
+        { label: 'Outlet Name', key: 'name', className: 'border p-4' },
         { label: 'Service', key: 'service' },
         { label: 'Tax', key: 'tax', className: 'border p-4' },
+        { label: 'Outlet Description', key: 'description', className: 'border p-4' },
         { label: 'Actions', key: 'actions', isAction: true, className: 'border p-4' }
     ],
     actions: [

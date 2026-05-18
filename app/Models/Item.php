@@ -12,7 +12,7 @@ class Item extends Model
         'subgroup_id',
         'portion_id',
         'name',
-        'descripton',
+        'description',
         'currency_id',
         'price',
         'happy_hour_price',

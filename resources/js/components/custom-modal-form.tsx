@@ -91,6 +91,7 @@ interface CustomModalFormProps {
   setPreviewImage?: string |  null;
   extraData?: ExtraData;
   handleSearch: (e: ChangeEvent) => void;
+  handleGroupChange: (value: string) => void;
   handleReset: () => void;
 }
 
@@ -113,15 +114,17 @@ export const CustomModalForm = ({
   extraData,
   handleSearch,
   handleReset,
+  handleGroupChange,
 }: CustomModalFormProps) => {  
     const { auth } = usePage().props as any;
     const roles = auth.roles;
     const permissions = auth.permissions;
+
+    // console.log('mode: ', mode);
     
   return (
     <Dialog open={open} onOpenChange={onOpenChange} modal>
         
-
       <form>
 
         <div className="flex justify-between ml-auto px-2">
@@ -139,7 +142,7 @@ export const CustomModalForm = ({
                 </Button>
               </DialogTrigger>
             )} 
-          </div>
+        </div>
 
         {/* dialog content */}
         <DialogContent onInteractOutside={(e) => e.preventDefault()} className="sm:max-w-[830px] max-h-screen overflow-scroll">
@@ -170,8 +173,8 @@ export const CustomModalForm = ({
                             autoComplete={field.autocomplete}
                             tabIndex={field.tabIndex}
                             className={field.className}
+                            value={data[field.name] || null}
                             onChange={(e) => setData(field.name, e.target.value)}
-                            value={data[field.name] || ''}
                             disabled={processing || mode === 'view'}
                             />
                         ) : field.type === 'file' ? (
@@ -196,7 +199,8 @@ export const CustomModalForm = ({
                           </div>
                           
                         ): field.type === 'single-select' ? (
-                            <Select disabled={processing || mode === 'view'} value={data[field.name] || ''} 
+                            <Select disabled={processing || mode === 'view'} 
+                              value={data[field.name] || ''} 
                                 onValueChange={(value) => setData(field.name, value)}>
                                 <SelectTrigger>
                                     <SelectValue placeholder={`Select ${field.label}`}></SelectValue>
@@ -217,24 +221,31 @@ export const CustomModalForm = ({
                                 </SelectContent>
                             </Select>
                         ): field.type === 'single-select2' ? (
-                          <Select disabled={processing || mode === 'view'}
-                              value={data[field.name]}
-                              onValueChange={(value) => setData(field.name, value) }>
+                          <Select 
+                              disabled={processing || mode === 'view'}
+                              value={data[field.id] || '' }
+                              onValueChange={(value) => {
+                                setData(field.id, value);
+                                // handleValueChange();
+                                }}>
 
                             <SelectTrigger>
-                              <SelectValue placeholder={`Select ${field.name}`} />
+                              <SelectValue placeholder={`Select ${field.label}`} />
                             </SelectTrigger>
 
                             <SelectContent>
-                              {(extraData?.groups || []).map((item: any) => ({
-                                  key: item.id,
-                                  value: item.name,
-                                  label: item.label,
-                              }))?.map((option: FieldOption) => (
-                                  <SelectItem key={option.key} value={String(option.value)}>
-                                    {option.label} 
-                                  </SelectItem>
-                              ))}
+                                {(field.options?.length 
+                                    ? field.options 
+                                    : (extraData?.[field.key] || []).map((item: any) => ({
+                                      key: item.id,
+                                      value: item.name,
+                                      label: item.name,
+                                      
+                                  })))?.map((option: FieldOption) => (
+                                    <SelectItem key={option.key} value={String(option.key)}>
+                                      {option.label} 
+                                    </SelectItem>
+                                  ))}
                             </SelectContent>
                           </Select>
                         ): field.type === 'grouped-checkboxes' ? (
@@ -270,16 +281,56 @@ export const CustomModalForm = ({
                             ))}
                           </div>
                             
+                        ) : field.type === "radio" ? (
+                          <div className="flex gap-4 w-full">
+                              <label className="flex items-center gap-2 cursor-pointer">
+                                  <input
+                                      className="cursor-pointer"
+                                      type="radio"
+                                      name="group_id"
+                                      onChange={(e) =>  {
+                                        handleGroupChange(e.target.value);
+                                        setData(field.id, e.target.value);
+                                      }} 
+                                      value="0"
+                                      checked={data[field.id] === "0"}
+                                  />
+                                  All
+                              </label>
+                            {(extraData?.[field.key] || []).map((item: any) => ({
+                                   key: item.id,
+                                   value: item.name,
+                                   label: item.name,
+                             }))?.map((option: FieldOption) => (
+
+                                <label className="flex items-center gap-2 cursor-pointer">
+                                 <input
+                                    className="cursor-pointer"
+                                    type="radio"
+                                    name="group_id"
+                                    onChange={(e) =>  {
+                                      handleGroupChange(e.target.value);
+                                      setData(field.id, e.target.value);
+                                      // console.log('field.id ', data[field.id]);
+                                      // console.log('option.key ', option.key);
+                                    }} 
+                                    value={option.key}
+                                    checked={data[field.id] == option.key}
+                                   />
+                                   {option.label}
+                                </label>
+                             ))}
+                          </div>
                         ) : (
                           <Input 
                               id={field.id}
                               name={field.name}
                               placeholder={field.placeholder}
                               autoComplete={field.autocomplete}
-                              tabIndex={field.tabIndex}
+                              value={data[field.name] || null }
                               onChange={(e) => setData(field.name, e.target.value)}
-                              value={data[field.name] || ''}
                               disabled={processing || mode === 'view'}
+                              tabIndex={field.tabIndex}
                             />
                           )}
 
@@ -292,7 +343,6 @@ export const CustomModalForm = ({
                 </div>
             </FieldGroup>
 
-          
             <DialogFooter>
 
               {buttons.map((button) => {

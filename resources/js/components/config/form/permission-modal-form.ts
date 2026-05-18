@@ -28,7 +28,7 @@ export const PermissionModalFormConfig = {
                 { label: 'Sub Groups', value: 'subgroups', key: 'subgroups' },
                 { label: 'Portions', value: 'portions', key: 'portions' },
                 { label: 'Currency', value: 'currency', key: 'currency' },
-                { label: 'Item', value: 'items', key: 'items' },
+                { label: 'Items', value: 'items', key: 'items' },
                 { label: 'Properties', value: 'properties', key: 'properties' },
                 { label: 'Users', value: 'users', key: 'users' },
                 { label: 'Permissions', value: 'permissions', key: 'permissions' },

@@ -13,9 +13,10 @@ return new class extends Migration
     {
         Schema::create('outlets', function (Blueprint $table) {
             $table->id();
-            $table->string('outlet');
+            $table->string('name');
             $table->integer('tax');
             $table->integer('service');
+            $table->string('description')->nullable();
             $table->timestamps();
         });
     }

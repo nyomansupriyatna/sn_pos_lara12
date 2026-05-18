@@ -7,9 +7,10 @@ use Illuminate\Database\Eloquent\Model;
 class Outlet extends Model
 {
     protected $fillable = [
-        'outlet',
+        'name',
         'tax',
         'service',
+        'description',
     ];
 
     public function items()

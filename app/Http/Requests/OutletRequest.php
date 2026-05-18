@@ -22,9 +22,10 @@ class OutletRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'outlet' => 'required|string|max:100',
+            'name' => 'required|string|max:100',
             'service' => 'required|integer|max:100',
             'tax' => 'required|integer|max:100',
+            'description' => 'nullable|string|max:100',
         ];
     }
 }

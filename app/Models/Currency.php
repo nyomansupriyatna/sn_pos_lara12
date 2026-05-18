@@ -9,8 +9,9 @@ class Currency extends Model
     // protected $table = 'currencies';
 
     protected $fillable = [
-        'currency',
+        'name',
         'exc_rate',
+        'description',
     ];
 
     public function items()

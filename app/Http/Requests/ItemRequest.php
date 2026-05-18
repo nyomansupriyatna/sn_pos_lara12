@@ -4,7 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
 
-class CurrencyRequest extends FormRequest
+class ItemRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -14,11 +14,11 @@ class CurrencyRequest extends FormRequest
         return true;
     }
 
-
     public function prepareForValidation(): void
     {
         $this->merge([
-            'exc_rate' => str_replace(',', '', $this->exc_rate),
+            'price' => str_replace(',', '', $this->price),
+            'happy_hour_price' => str_replace(',', '', $this->happy_hour_price),
             // 'exc_rate' => float($this->exc_rate),
         ]);
     }
@@ -31,9 +31,14 @@ class CurrencyRequest extends FormRequest
     public function rules(): array
     {
         return [
+
+            'outlet_id'  => 'required|numeric',
+            'subgroup_id'  => 'required|numeric',
+            'portion_id'  => 'required|numeric',
             'name' => 'required|string',
-            'exc_rate' => 'required|numeric',
-            'decription' => 'nullable',
+            'description' => 'nullable|string',
+            'currency_id'  => 'required|numeric',
+            'price'  => 'required|numeric',
         ];
     }
 }

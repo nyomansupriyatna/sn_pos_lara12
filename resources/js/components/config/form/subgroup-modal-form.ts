@@ -16,10 +16,10 @@ export const SubgroupModalFormConfig = {
     fields: [
         {
             id: 'group_name',
-            key: 'group_name',
+            key: 'groups',
             name: 'group_name',
             label: 'Group Name',
-            type: 'single-select2',
+            type: 'single-select',
             autocomplete: 'group_name',
             tabIndex: 1,
             autoFocus: true,
